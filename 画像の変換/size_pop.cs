@@ -7,22 +7,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace 画像の変換
 {
     public partial class size_pop : Form
     {
         private PictureBox pictureBox;
-        public size_pop(Bitmap bitmap, int width, int hight)
+        public size_pop(Bitmap bitmap, int width, int height)
         {
             InitializeComponent();
-            this.Size = new Size(width, hight);
+            this.Size = new Size(width, height);
             pictureBox = new PictureBox();
             pictureBox.SizeMode = PictureBoxSizeMode.Zoom; // 画像のサイズを調整
             pictureBox.Dock = DockStyle.Fill; // フォームいっぱいに表示
 
             // BitmapをPictureBoxに設定
-            pictureBox.Image = bitmap;
+            pictureBox.Image = new Bitmap(bitmap, new Size(width, height));
 
             // PictureBoxをフォームに追加
             this.Controls.Add(pictureBox);

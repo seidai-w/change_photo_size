@@ -14,6 +14,7 @@ using System.Reflection;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Runtime.CompilerServices;
 using static System.Net.Mime.MediaTypeNames;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 
 namespace 画像の変換
@@ -48,7 +49,7 @@ namespace 画像の変換
                 {
                     return;
                 }
-                
+
                 using (Bitmap bitmap = new Bitmap(textBox4.Text))
                 {
                     // ポップアップフォームを表示
@@ -184,10 +185,12 @@ namespace 画像の変換
                     if (tmp != 0 && tmp == height_tmp)
                     {
                         _height = height_tmp;
-                    } else if ( tmp != 0 && tmp != height_tmp)
+                    }
+                    else if (tmp != 0 && tmp != height_tmp)
                     {
                         _height = tmp;
-                    } else
+                    }
+                    else
                     {
                         MessageBox.Show("サイズの変換に失敗しました", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return result;
@@ -504,22 +507,60 @@ namespace 画像の変換
                     {
                         return;
                     }
-                    var tmp = Get_size(tmps[i]);
-                    if (!(bool)tmp[0])
+                    if (user_choice.Checked && checkBox3.Checked)
                     {
-                        return;
-                    }
+                        if (width.Text == "" || height.Text == "")
+                        {
+                            MessageBox.Show("横か縦の値が空欄になっています", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        int _width = 0;
+                        int _height = 0;
+                        bool success = int.TryParse(width.Text, out _width);
 
-                    if (!resize_photo(tmps[i], save_path, (int)tmp[1], (int)tmp[2], (bool)tmp[3]))
-                    {
-                        flags = true;
+                        if (!success || _width < 1)
+                        {
+                            return;
+                        }
+                        success = int.TryParse(width.Text, out _height);
+
+                        if (!success || _height < 1)
+                        {
+                            return;
+                        }
+                        var sizes = resized_size(tmps[i], _width, _height, width_priority.Checked);
+                        if (sizes[0] == 0 || sizes[1] == 0)
+                        {
+                            return;
+                        }
+                        if (!resize_photo(tmps[i], save_path, sizes[0], sizes[1], (_width - sizes[0] < 0 || _height - sizes[1] < 0)))
+                        {
+                            flags = true;
+                        }
+
+
                     }
+                    else
+                    {
+                        var tmp = Get_size(tmps[i]);
+                        if (!(bool)tmp[0])
+                        {
+                            return;
+                        }
+
+                        if (!resize_photo(tmps[i], save_path, (int)tmp[1], (int)tmp[2], (bool)tmp[3]))
+                        {
+                            flags = true;
+                        }
+                    }
+                    
                     progressBar1.Value = i + 1;
                 }
                 if (flags)
                 {
                     MessageBox.Show("変換できないものがありました。", "結果", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                } else
+                }
+                else
                 {
                     MessageBox.Show("すべて完了しました", "結果");
                 }
@@ -566,6 +607,10 @@ namespace 画像の変換
                 button1.Visible = true;
                 button2.Visible = true;
                 button3.Visible = true;
+                label11.Visible = true;
+                listBox2.Visible = true;
+                button9.Visible = true;
+                button10.Visible = true;
             }
             else
             {
@@ -575,6 +620,10 @@ namespace 画像の変換
                 button1.Visible = false;
                 button2.Visible = false;
                 button3.Visible = false;
+                label11.Visible = false;
+                listBox2.Visible = false;
+                button9.Visible = false;
+                button10.Visible = false;
             }
         }
 
@@ -589,7 +638,8 @@ namespace 画像の変換
             {
                 textBox1.Visible = true;
                 button4.Visible = true;
-            } else
+            }
+            else
             {
                 textBox1.Text = "";
                 textBox1.Visible = false;
@@ -643,7 +693,7 @@ namespace 画像の変換
             // ファイルが渡されていなければ、何もしない
             if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
             var file = (string[])e.Data.GetData(DataFormats.FileDrop);
-            if (extent.Contains( Path.GetExtension(file[0])))
+            if (extent.Contains(Path.GetExtension(file[0])))
             {
                 textBox4.Text = file[0].ToString();
                 if (checkBox2.Checked)
@@ -727,7 +777,8 @@ namespace 画像の変換
 
         private void radioButton3_CheckedChanged(object sender, EventArgs e)
         {
-            if (!user_choice.Checked) {
+            if (!user_choice.Checked)
+            {
                 label13.Visible = false;
                 label14.Visible = false;
                 height.Text = "";
@@ -736,16 +787,25 @@ namespace 画像の変換
                 width.Visible = false;
                 checkBox3.Visible = false;
                 button6.Visible = false;
-                groupBox4.Visible = true;
-            } else
+                if (tabControl1.SelectedIndex == 0)
+                {
+                    groupBox4.Visible = true;
+                }
+            }
+            else
             {
                 label13.Visible = true;
                 label14.Visible = true;
                 height.Visible = true;
                 width.Visible = true;
-                checkBox3.Visible = true;
+                if (tabControl1.SelectedIndex == 0)
+                {
+                    checkBox3.Visible = true;
+                }
                 button6.Visible = true;
-                groupBox4.Visible = false;
+                if (tabControl1.SelectedIndex == 0) {
+                    groupBox4.Visible = true;
+                }
             }
         }
         //呼び出し↓↓
@@ -808,7 +868,7 @@ namespace 画像の変換
                 var tmp = Get_size(textBox4.Text);
                 if (!(bool)tmp[0])
                 {
-                    
+
                     return;
                 }
 
@@ -829,7 +889,7 @@ namespace 画像の変換
         /// <param name="height"></param>
         /// <param name="begger"></param>
         /// <returns></returns>
-        private bool resize_photo( string origin, string save_path, int width, int height, bool begger)
+        private bool resize_photo(string origin, string save_path, int width, int height, bool begger)
         {
             try
             {
@@ -910,5 +970,528 @@ namespace 画像の変換
             listBox1.Items.Clear();
         }
 
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                if (textBox4.Text != "")
+                {
+                    try
+                    {
+                        using (System.Drawing.Image image = System.Drawing.Image.FromFile(textBox4.Text))
+                        {
+                            width.Text = image.Width.ToString();
+                            height.Text = image.Height.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("画像の読み込みに失敗しました: " + ex.Message.ToString(), "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+            else if (tabControl1.SelectedIndex == 1)
+            {
+                if (textBox5.Text != "")
+                {
+                    try
+                    {
+                        using (System.Drawing.Image image = System.Drawing.Image.FromFile(textBox5.Text))
+                        {
+                            width.Text = image.Width.ToString();
+                            height.Text = image.Height.ToString();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("画像の読み込みに失敗しました: " + ex.Message.ToString(), "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+                }
+            }
+        }
+
+        private void width_TextChanged(object sender, EventArgs e)
+        {
+            int _width = 0;
+            if (tabControl1.SelectedIndex == 0)
+            {
+                if (textBox4.Text != "")
+                {
+                    if (!string.IsNullOrEmpty(textBox4.Text) && checkBox3.Checked && width.Focused)
+                    {
+                        bool success = int.TryParse(width.Text, out _width);
+
+                        if (!success || _width < 1)
+                        {
+                            return;
+                        }
+                        var tmp = get_oligin_size(textBox4.Text);
+                        if (tmp[0].Key == 0)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            height.Text = roun(tmp[0].Value * _width, tmp[0].Key).ToString();
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+
+        private List<KeyValuePair<int, int>> get_oligin_size(string path)
+        {
+            List<KeyValuePair<int, int>> list = new List<KeyValuePair<int, int>>();
+
+            try
+            {
+                if (extent.Contains(Path.GetExtension(path)) && File.Exists(path))
+                {
+                    using (System.Drawing.Image image = System.Drawing.Image.FromFile(path))
+                    {
+                        list.Add(new KeyValuePair<int, int>(image.Width, image.Height));
+                    }
+                    return list;
+                }
+                list.Add(new KeyValuePair<int, int>(0, 0));
+                return list;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("画像の読み込みに失敗しました: " + ex.Message.ToString(), "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                list.Add(new KeyValuePair<int, int>(0, 0));
+                return list;
+            }
+        }
+
+        private void height_TextChanged(object sender, EventArgs e)
+        {
+            int _height = 0;
+            if (tabControl1.SelectedIndex == 0)
+            {
+                if (textBox4.Text != "")
+                {
+                    if (!string.IsNullOrEmpty(textBox4.Text) && checkBox3.Checked && height.Focused)
+                    {
+                        bool success = int.TryParse(height.Text, out _height);
+
+                        if (!success || _height < 1)
+                        {
+                            return;
+                        }
+                        var tmp = get_oligin_size(textBox4.Text);
+                        if (tmp[0].Key == 0)
+                        {
+                            return;
+                        }
+                        else
+                        {
+                            width.Text = roun(tmp[0].Key * _height, tmp[0].Value).ToString();
+                        }
+                    }
+                }
+            }
+            else
+            {
+
+            }
+        }
+
+        private List<int> resized_size(string path, int width, int height, bool width_priority)
+        {
+            var list = new List<int>() { 0, 0 };
+            if (!width_priority)
+            {
+                var tmp = get_oligin_size(path);
+                if (tmp[0].Key == 0)
+                {
+                    return list;
+                }
+                else
+                {
+                    list[1] = height;
+                    list[0] = roun(tmp[0].Key * height, tmp[0].Value);
+                    return list;
+                }
+
+
+            }
+            else
+            {
+                var tmp = get_oligin_size(path);
+                if (tmp[0].Key == 0)
+                {
+                    return list;
+                }
+                else
+                {
+                    list[0] = width;
+                    list[1] = roun(tmp[0].Value * width, tmp[0].Key);
+                    return list;
+                }
+            }
+        }
+
+        private void checkBox3_CheckedChanged(object sender, EventArgs e)
+        {
+            if (!checkBox3.Checked)
+            {
+                groupBox4.Visible = false;
+            }
+            else { 
+                groupBox4.Visible= true;
+            }
+        }
+
+        private void tabPage1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox5_DragDrop(object sender, DragEventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            textBox5.BackColor = SystemColors.Control;
+            // ファイルが渡されていなければ、何もしない
+            if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+            var file = (string[])e.Data.GetData(DataFormats.FileDrop);
+            if (extent.Contains(Path.GetExtension(file[0])))
+            {
+                textBox5.Text = file[0].ToString();
+                if (checkBox2.Checked)
+                {
+                    string save_path = get_path(textBox5.Text);
+                    if (save_path == "")
+                    {
+                        return;
+                    }
+                    List<int> tmp = size_check();
+                    if (tmp[0] == 0)
+                    {
+                        return;
+                    }
+                    if (resize_photo_back(textBox5.Text, save_path, (int)tmp[1], (int)tmp[2]))
+                    {
+                        textBox5.Text = "";
+                        MessageBox.Show("変換が完了しました", "結果");
+                    }
+                }
+            }
+        }
+
+        private void textBox5_DragEnter(object sender, DragEventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            textBox5.BackColor = Color.Red;
+        }
+
+        private void textBox5_DragLeave(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            textBox5.BackColor = SystemColors.Window;
+        }
+
+        private void textBox5_DragOver(object sender, DragEventArgs e)
+        {
+            // ドラッグ対象が許可されている場合、カーソルをデフォルトに設定
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy; // コピーが許可された場合
+                this.Cursor = Cursors.Default;   // デフォルトのカーソルに変更
+                textBox5.BackColor = Color.Red;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None; // 不許可の場合
+                this.Cursor = Cursors.No; // 不可カーソルに変更
+                textBox5.BackColor = Color.Red; // 背景色を変更
+            }
+        }
+
+        private void tabControl1_Click(object sender, EventArgs e)
+        {
+            if (tabControl1.SelectedIndex == 0)
+            {
+                groupBox4.Visible = true;
+                checkBox3.Visible = true;
+            }
+            else if (tabControl1.SelectedIndex == 1) 
+            {
+                groupBox4.Visible= false;
+                checkBox3.Visible = false;
+            }
+        }
+
+        public static Bitmap ResizeWithPadding(System.Drawing.Image image, int width, int height)
+        {
+            // 目的のサイズのBitmapを作成（白色背景）
+            Bitmap resizedImage = new Bitmap(width, height);
+
+            // 背景を白色に設定
+            using (Graphics g = Graphics.FromImage(resizedImage))
+            {
+                g.Clear(Color.White); // 背景色を白に設定
+
+                // 元の画像の比率に合わせてリサイズ
+                float aspectRatio = (float)image.Width / image.Height;
+                int newWidth = width;
+                int newHeight = height;
+
+                // 画像の比率に合わせてリサイズ
+                if (width / aspectRatio <= height)
+                {
+                    newWidth = width;
+                    newHeight = (int)(width / aspectRatio);
+                }
+                else
+                {
+                    newHeight = height;
+                    newWidth = (int)(height * aspectRatio);
+                }
+
+                // リサイズ後の画像を中央に描画
+                int x = (width - newWidth) / 2;
+                int y = (height - newHeight) / 2;
+
+                // リサイズした画像を中央に描画
+                g.DrawImage(image, x, y, newWidth, newHeight);
+            }
+
+            return resizedImage;
+        }
+
+        private bool resize_photo_back(string origin, string save_path, int width, int height)
+        {
+            try
+            {
+                // 画像を読み込む
+                using (System.Drawing.Image image = System.Drawing.Image.FromFile(origin))
+                {
+                    using (System.Drawing.Image changed_image = ResizeWithPadding(image, width, height)) { 
+                        //MessageBox.Show($"{save_path}\r\n横:{width}  縦:{height}\r\n新");
+                        // 画像を指定したフォーマットで保存（例：PNG）
+                        changed_image.Save(save_path, GetImageFormat(comboBox1.SelectedItem.ToString()));
+                        return true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"エラー: {ex.Message}", "警告", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+        
+        private List<int> size_check()
+        {
+            List<int> size_ = new List<int>() { 0, 0, 0 };
+            if (radioButton30.Checked)
+            {
+                size_[0] = 1;
+                size_[1] = 1280;
+                size_[2] = 960;
+            }
+            else if (radioButton29.Checked)
+            {
+                size_[0] = 1;
+                size_[1] = 1024;
+                size_[2] = 768;
+            }
+            else if (radioButton28.Checked)
+            {
+                size_[0] = 1;
+                size_[1] = 640;
+                size_[2] = 480;
+            }
+            else if (radioButton27.Checked)
+            {
+                size_[0] = 1;
+                size_[1] = 300;
+                size_[2] = 225;
+            }
+            else if (user_choice.Checked)
+            {
+                bool success = int.TryParse(width.Text, out int tmp);
+
+                if (!success || tmp < 1)
+                {
+                    return size_;
+                }
+                size_[1] = tmp;
+                tmp = 0;
+                success = int.TryParse(height.Text, out tmp);
+
+                if (!success || tmp < 1)
+                {
+                    return size_;
+                }
+                size_[2] = tmp;
+                size_[0] = 1;
+            }
+            return size_;
+
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            if (textBox5.Text != "")
+            {
+                string save_path = get_path(textBox5.Text);
+                if (save_path == "")
+                {
+                    return;
+                }
+                List<int> tmp = size_check();
+                if (tmp[0] == 0)
+                {
+                    return;
+                }
+                if (resize_photo_back(textBox5.Text, save_path, (int)tmp[1], (int)tmp[2]))
+                {
+                    textBox5.Text = "";
+                    MessageBox.Show("変換が完了しました", "結果");
+                }
+
+            }
+        }
+        private void panel2_DragEnter(object sender, DragEventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            panel2.BackColor = Color.FromArgb(50, 255, 0, 0);
+        }
+
+        private void panel2_DragOver(object sender, DragEventArgs e)
+        {
+            // ドラッグ対象が許可されている場合、カーソルをデフォルトに設定
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy; // コピーが許可された場合
+                this.Cursor = Cursors.Default;   // デフォルトのカーソルに変更
+                panel2.BackColor = Color.FromArgb(50, 255, 0, 0); // 背景色を変更
+            }
+            else
+            {
+                e.Effect = DragDropEffects.None; // 不許可の場合
+                this.Cursor = Cursors.No; // 不可カーソルに変更
+                panel2.BackColor = Color.FromArgb(50, 255, 0, 0); // 背景色を変更
+            }
+        }
+        private void panel2_DragDrop(object sender, DragEventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            panel2.BackColor = SystemColors.Control;
+            var flags = false;
+            if (!checkBox2.Checked)
+            {
+                // ファイルが渡されていなければ、何もしない
+                if (!e.Data.GetDataPresent(DataFormats.FileDrop)) return;
+
+                // 渡されたファイルに対して処理を行う
+                foreach (var filePath in (string[])e.Data.GetData(DataFormats.FileDrop))
+                {
+                    listBox2.Items.Add(filePath);
+                }
+            }
+            else
+            {
+                var tmps = (string[])e.Data.GetData(DataFormats.FileDrop);
+                progressBar2.Maximum = tmps.Length;
+                for (int i = 0; i < tmps.Length; i++)
+                {
+                    string save_path = get_path(tmps[i]);
+                    if (save_path == "")
+                    {
+                        flags = true;
+                        break;
+                    }
+                    List<int> tmp = size_check();
+                    if (tmp[0] == 0)
+                    {
+                        flags = true;
+                        break;
+                    }
+                    if (!resize_photo_back(tmps[i], save_path, (int)tmp[1], (int)tmp[2]))
+                    {
+                        flags = true;
+                    }
+
+                    progressBar2.Value = i + 1;
+                }
+                if (flags)
+                {
+                    MessageBox.Show("変換できないものがありました。", "結果", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show("すべて完了しました", "結果");
+                }
+                progressBar2.Value = 0;
+            }
+        }
+
+        private void panel2_DragLeave(object sender, EventArgs e)
+        {
+            this.Cursor = Cursors.Default;
+            panel2.BackColor = SystemColors.Control;
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            listBox2.Items.Clear();
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            int tmps = listBox2.Items.Count;
+            if (tmps == 0)
+            {
+                return;
+            }
+            bool flags = false;
+            progressBar2.Maximum = tmps;
+            for (int i = 0; i < tmps; i++)
+            {
+                string item = listBox2.Items[i].ToString();
+                string save_path = get_path(item);
+                if (save_path == "")
+                {
+                    flags = true;
+                    break;
+                }
+                List<int> tmp = size_check();
+                if (tmp[0] == 0)
+                {
+                    flags = true;
+                    break;
+                }
+                if (!resize_photo_back(item, save_path, (int)tmp[1], (int)tmp[2]))
+                {
+                    flags = true;
+                }
+
+                progressBar2.Value = i + 1;
+            }
+            if (flags)
+            {
+                MessageBox.Show("変換できないものがありました。", "結果", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            else
+            {
+                MessageBox.Show("すべて完了しました", "結果");
+            }
+            progressBar2.Value = 0;
+            listBox2.Items.Clear();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
+        }
     }
 }

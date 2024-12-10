@@ -80,10 +80,10 @@
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.tabControl3 = new System.Windows.Forms.TabControl();
             this.tabPage5 = new System.Windows.Forms.TabPage();
+            this.button12 = new System.Windows.Forms.Button();
             this.label10 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.textBox5 = new System.Windows.Forms.TextBox();
-            this.button8 = new System.Windows.Forms.Button();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.button9 = new System.Windows.Forms.Button();
             this.button10 = new System.Windows.Forms.Button();
@@ -93,6 +93,7 @@
             this.progressBar2 = new System.Windows.Forms.ProgressBar();
             this.panel2 = new System.Windows.Forms.Panel();
             this.label15 = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -260,6 +261,7 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.label16);
             this.groupBox3.Controls.Add(this.groupBox4);
             this.groupBox3.Controls.Add(this.button6);
             this.groupBox3.Controls.Add(this.label14);
@@ -285,7 +287,7 @@
             // 
             this.groupBox4.Controls.Add(this.height_priority);
             this.groupBox4.Controls.Add(this.width_priority);
-            this.groupBox4.Location = new System.Drawing.Point(123, 26);
+            this.groupBox4.Location = new System.Drawing.Point(123, 48);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(153, 66);
             this.groupBox4.TabIndex = 23;
@@ -323,6 +325,7 @@
             this.button6.Text = "現在の値";
             this.button6.UseVisualStyleBackColor = true;
             this.button6.Visible = false;
+            this.button6.Click += new System.EventHandler(this.button6_Click);
             // 
             // label14
             // 
@@ -351,6 +354,7 @@
             this.height.Size = new System.Drawing.Size(47, 19);
             this.height.TabIndex = 19;
             this.height.Visible = false;
+            this.height.TextChanged += new System.EventHandler(this.height_TextChanged);
             this.height.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.height_KeyPress);
             // 
             // width
@@ -360,6 +364,7 @@
             this.width.Size = new System.Drawing.Size(47, 19);
             this.width.TabIndex = 18;
             this.width.Visible = false;
+            this.width.TextChanged += new System.EventHandler(this.width_TextChanged);
             this.width.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.width_KeyPress);
             // 
             // checkBox3
@@ -367,13 +372,14 @@
             this.checkBox3.AutoSize = true;
             this.checkBox3.Checked = true;
             this.checkBox3.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox3.Location = new System.Drawing.Point(120, 120);
+            this.checkBox3.Location = new System.Drawing.Point(119, 120);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(96, 16);
             this.checkBox3.TabIndex = 17;
             this.checkBox3.Text = "縦横比を維持";
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.Visible = false;
+            this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
             // user_choice
             // 
@@ -455,6 +461,7 @@
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(424, 385);
             this.tabControl1.TabIndex = 22;
+            this.tabControl1.Click += new System.EventHandler(this.tabControl1_Click);
             // 
             // tabPage2
             // 
@@ -563,7 +570,7 @@
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(227, 296);
+            this.button3.Location = new System.Drawing.Point(236, 294);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
             this.button3.TabIndex = 13;
@@ -574,7 +581,7 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(320, 296);
+            this.button2.Location = new System.Drawing.Point(317, 294);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
             this.button2.TabIndex = 12;
@@ -656,6 +663,7 @@
             this.tabPage1.TabIndex = 2;
             this.tabPage1.Text = "余白を追加してリサイズ";
             this.tabPage1.UseVisualStyleBackColor = true;
+            this.tabPage1.Click += new System.EventHandler(this.tabPage1_Click);
             // 
             // tabControl3
             // 
@@ -666,13 +674,17 @@
             this.tabControl3.SelectedIndex = 0;
             this.tabControl3.Size = new System.Drawing.Size(406, 349);
             this.tabControl3.TabIndex = 18;
+            this.tabControl3.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox5_DragDrop);
+            this.tabControl3.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox5_DragEnter);
+            this.tabControl3.DragOver += new System.Windows.Forms.DragEventHandler(this.textBox5_DragOver);
+            this.tabControl3.DragLeave += new System.EventHandler(this.textBox5_DragLeave);
             // 
             // tabPage5
             // 
+            this.tabPage5.Controls.Add(this.button12);
             this.tabPage5.Controls.Add(this.label10);
             this.tabPage5.Controls.Add(this.button7);
             this.tabPage5.Controls.Add(this.textBox5);
-            this.tabPage5.Controls.Add(this.button8);
             this.tabPage5.Location = new System.Drawing.Point(4, 22);
             this.tabPage5.Name = "tabPage5";
             this.tabPage5.Padding = new System.Windows.Forms.Padding(3);
@@ -680,6 +692,16 @@
             this.tabPage5.TabIndex = 0;
             this.tabPage5.Text = "1枚変換";
             this.tabPage5.UseVisualStyleBackColor = true;
+            // 
+            // button12
+            // 
+            this.button12.Location = new System.Drawing.Point(317, 294);
+            this.button12.Name = "button12";
+            this.button12.Size = new System.Drawing.Size(75, 23);
+            this.button12.TabIndex = 7;
+            this.button12.Text = "実行";
+            this.button12.UseVisualStyleBackColor = true;
+            this.button12.Click += new System.EventHandler(this.button12_Click);
             // 
             // label10
             // 
@@ -706,16 +728,10 @@
             this.textBox5.Name = "textBox5";
             this.textBox5.Size = new System.Drawing.Size(335, 19);
             this.textBox5.TabIndex = 3;
-            // 
-            // button8
-            // 
-            this.button8.Location = new System.Drawing.Point(317, 294);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(75, 23);
-            this.button8.TabIndex = 0;
-            this.button8.Text = "プレビュー";
-            this.button8.UseVisualStyleBackColor = true;
-            this.button8.Visible = false;
+            this.textBox5.DragDrop += new System.Windows.Forms.DragEventHandler(this.textBox5_DragDrop);
+            this.textBox5.DragEnter += new System.Windows.Forms.DragEventHandler(this.textBox5_DragEnter);
+            this.textBox5.DragOver += new System.Windows.Forms.DragEventHandler(this.textBox5_DragOver);
+            this.textBox5.DragLeave += new System.EventHandler(this.textBox5_DragLeave);
             // 
             // tabPage6
             // 
@@ -736,23 +752,25 @@
             // 
             // button9
             // 
-            this.button9.Location = new System.Drawing.Point(227, 296);
+            this.button9.Location = new System.Drawing.Point(236, 294);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(75, 23);
             this.button9.TabIndex = 13;
             this.button9.Text = "クリア";
             this.button9.UseVisualStyleBackColor = true;
             this.button9.Visible = false;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
             // 
             // button10
             // 
-            this.button10.Location = new System.Drawing.Point(320, 296);
+            this.button10.Location = new System.Drawing.Point(317, 294);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(75, 23);
             this.button10.TabIndex = 12;
             this.button10.Text = "実行";
             this.button10.UseVisualStyleBackColor = true;
             this.button10.Visible = false;
+            this.button10.Click += new System.EventHandler(this.button10_Click);
             // 
             // label11
             // 
@@ -802,6 +820,10 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(389, 44);
             this.panel2.TabIndex = 0;
+            this.panel2.DragDrop += new System.Windows.Forms.DragEventHandler(this.panel2_DragDrop);
+            this.panel2.DragEnter += new System.Windows.Forms.DragEventHandler(this.panel2_DragEnter);
+            this.panel2.DragOver += new System.Windows.Forms.DragEventHandler(this.panel2_DragOver);
+            this.panel2.DragLeave += new System.EventHandler(this.panel2_DragLeave);
             // 
             // label15
             // 
@@ -811,6 +833,15 @@
             this.label15.Size = new System.Drawing.Size(89, 12);
             this.label15.TabIndex = 0;
             this.label15.Text = "ここへドラッグ";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(127, 17);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(53, 12);
+            this.label16.TabIndex = 24;
+            this.label16.Text = "varsion:";
             // 
             // Form1
             // 
@@ -825,6 +856,7 @@
             this.Font = new System.Drawing.Font("ＭＳ 明朝", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(128)));
             this.Name = "Form1";
             this.Text = "画像の変換";
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
@@ -911,7 +943,6 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button button7;
         private System.Windows.Forms.TextBox textBox5;
-        private System.Windows.Forms.Button button8;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.Button button9;
         private System.Windows.Forms.Button button10;
@@ -922,6 +953,8 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Label label15;
         private System.Windows.Forms.Button button11;
+        private System.Windows.Forms.Button button12;
+        private System.Windows.Forms.Label label16;
     }
 }
 
